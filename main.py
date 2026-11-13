@@ -65,7 +65,11 @@ def forecast_market(prices, horizon):
     rows = []
     for h in range(1, horizon + 1):
         spread = sigma * math.sqrt(h)
-        rows.append([price6(x + z * spread) for z in Z])
+        qs = [price6(x + z * spread) for z in Z]
+        # The gate needs monotone quantiles; the normal quantiles are
+        # monotone by construction and clamping can only tie them.
+        assert qs == sorted(qs), "quantiles not monotone"
+        rows.append(qs)
     return rows
 
 
